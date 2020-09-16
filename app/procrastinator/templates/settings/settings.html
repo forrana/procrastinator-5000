@@ -19,7 +19,7 @@
             <a class="action" href="{{ url_for('settings.category', id=category['id']) }}">Edit</a>
           {% endif %}
         </header>
-      {% for activity in activities %}
+      {% for activity in activities[category['id']] %}
           <article class="post">
             <div>
               <h1>{{ activity['title'] }}</h1>

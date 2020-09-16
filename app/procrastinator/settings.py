@@ -17,13 +17,14 @@ def settings():
         ' SELECT id, title, description, is_positive, icon, user_id'
         ' FROM category'
     ).fetchall()
-    activities = db.execute(
-        ' SELECT a.id, a.title, a.description, score, a.icon, category_id'
-        ' FROM activity a JOIN category c ON a.category_id = c.id'
-        ' GROUP BY category_id'
-        ' ORDER BY score DESC'
-    ).fetchall()
-    return render_template('settings/settings.html', activities=activities, categories=categories)
+    category_activities = {}
+    for category in categories:
+        activities = db.execute(
+            ' SELECT id, title, description, score, icon, category_id'
+            ' FROM activity WHERE category_id = {}'.format(category['id'])
+        ).fetchall()
+        category_activities[category['id']] = activities
+    return render_template('settings/settings.html', activities=category_activities, categories=categories)
 
 
 def get_activity(id, check_user=True):
