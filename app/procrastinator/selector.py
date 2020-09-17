@@ -18,12 +18,16 @@ def index():
         ' SELECT id, title, description, is_positive, icon, user_id'
         ' FROM category'
     ).fetchall()
-    activities = db.execute(
-        ' SELECT a.id, a.title, a.description, score, a.icon, category_id'
-        ' FROM activity a JOIN category c ON a.category_id = c.id'
-        ' GROUP BY category_id'
-    ).fetchall()
-    return render_template('selector/index.html', activities=activities, categories=categories)
+    category_activities = {}
+    for category in categories:
+        activities = db.execute(
+            ' SELECT id, title, description, score, icon, category_id'
+            ' FROM activity WHERE category_id = {}'
+            ' ORDER BY score LIMIT 1'.format(category['id'])
+        ).fetchall()
+        category_activities[category['id']] = activities
+    return render_template('selector/index.html', activities=category_activities, categories=categories)
+
 
 @bp.route('/create', methods=('GET', 'POST'))
 @login_required

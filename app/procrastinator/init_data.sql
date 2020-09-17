@@ -6,6 +6,6 @@ VALUES
 
 INSERT INTO activity (title, score, category_id)
 VALUES
-  ('Open A Social Network', 4, 1),
+  ('Surf facebook', 4, 1),
   ('Learn some finnish', 4, 2),
   ('Organize shelves', 2, 3);
