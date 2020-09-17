@@ -1,26 +1,22 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}{% endblock %}</h1>
+  <h1>{% block title %}Which one worth investing spare time?{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
+  <section class="selection">
   {% for category in categories %}
-      <article class="post">
+      <section class="action">
       {% for activity in activities[category['id']] %}
-          <article class="post">
-            <div>
-              <h1>{{ activity['title'] }}</h1>
-            </div>
-            {% if g.user['id'] == activity['user_id'] %}
-              <a class="action" href="{{ url_for('settings.activity', id=activity['id']) }}">Edit</a>
-            {% endif %}
-          </article>
+          <h1>{{ activity['title'] }}</h1>
         {% if not loop.last %}
-          <hr>
         {% endif %}
       {% endfor %}
-      </article>
+      </section>
   {% endfor %}
-    <a class="action" href="{{ url_for('selector.create') }}">Start</a>
+  </section>
+  <section class="actions">
+      <a class="action" href="{{ url_for('selector.create') }}">Start</a>
+  </section>
 {% endblock %}
