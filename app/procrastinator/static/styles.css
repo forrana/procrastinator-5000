@@ -30,6 +30,12 @@ header {
     justify-content: center;
     border: 1px solid black;
     margin: 1px;
+
+    background: white;
+}
+
+.action.active {
+    filter: invert(0.05);
 }
 
 .content {

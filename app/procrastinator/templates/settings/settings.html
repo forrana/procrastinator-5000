@@ -3,8 +3,8 @@
 {% block header %}
   <h1>{% block title %}settings{% endblock %}</h1>
   {% if g.user %}
-    <a class="action" href="{{ url_for('settings.category_create') }}">Create new category</a>
-    <a class="action" href="{{ url_for('settings.activity_create') }}">Create new activity</a>
+    <a class="action" href="<% url_for('settings.category_create') %>">Create new category</a>
+    <a class="action" href="<% url_for('settings.activity_create') %>">Create new activity</a>
   {% endif %}
 {% endblock %}
 
@@ -13,19 +13,19 @@
       <article class="post">
         <header>
           <div>
-            <h1>{{ category['title'] }}</h1>
+            <h1><% category['title'] %></h1>
           </div>
           {% if g.user['id'] == category['user_id'] %}
-            <a class="action" href="{{ url_for('settings.category', id=category['id']) }}">Edit</a>
+            <a class="action" href="<% url_for('settings.category', id=category['id']) %>">Edit</a>
           {% endif %}
         </header>
       {% for activity in activities[category['id']] %}
           <article class="post">
             <div>
-              <h1>{{ activity['title'] }}</h1>
+              <h1><% activity['title'] %></h1>
             </div>
             {% if g.user['id'] == activity['user_id'] %}
-              <a class="action" href="{{ url_for('settings.activity', id=activity['id']) }}">Edit</a>
+              <a class="action" href="<% url_for('settings.activity', id=activity['id']) %>">Edit</a>
             {% endif %}
           </article>
         {% if not loop.last %}

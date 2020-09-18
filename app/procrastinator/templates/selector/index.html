@@ -1,15 +1,14 @@
 {% extends 'base.html' %}
-
 {% block header %}
-  <h1>{% block title %}Which one worth investing spare time?{% endblock %}</h1>
+<h1>{% block title %}Which one worth investing spare time?{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
   <section class="selection">
   {% for category in categories %}
-      <section class="action">
+      <section class="action" v-on:click="selectCategory('<%category.id%>')" v-bind:class="{ active: '<%category.id%>' == selectedCategory }">
       {% for activity in activities[category['id']] %}
-          <h1>{{ activity['title'] }}</h1>
+          <h1><% activity['title'] %></h1>
         {% if not loop.last %}
         {% endif %}
       {% endfor %}
@@ -17,6 +16,6 @@
   {% endfor %}
   </section>
   <section class="actions">
-      <a class="action" href="{{ url_for('selector.create') }}">Start</a>
+      <a class="action" v-bind:href="'create/' + selectedCategory">Start</a>
   </section>
 {% endblock %}

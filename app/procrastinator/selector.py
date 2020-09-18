@@ -29,9 +29,9 @@ def index():
     return render_template('selector/index.html', activities=category_activities, categories=categories)
 
 
-@bp.route('/create', methods=('GET', 'POST'))
+@bp.route('/create/<int:category_id>', methods=('GET', 'POST'))
 @login_required
-def create():
+def create(category_id):
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
@@ -52,7 +52,7 @@ def create():
             db.commit()
             return redirect(url_for('selector.index'))
 
-    return render_template('selector/create.html')
+    return render_template('selector/create.html', category_id=category_id)
 
 def get_category(id, check_user=True):
     category = get_db().execute(
