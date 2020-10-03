@@ -6,16 +6,16 @@
 {% block content %}
   <section class="selection">
   {% for category in categories %}
-      <section class="action" v-on:click="selectCategory('<%category.id%>')" v-bind:class="{ active: '<%category.id%>' == selectedCategory }">
-      {% for activity in activities[category['id']] %}
+    {% for activity in activities[category['id']] %}
+      <section class="action" v-on:click="selectActivity('<%activity.id%>')" v-bind:class="{ active: '<%activity.id%>' == selectedActivity }">
           <h1><% activity['title'] %></h1>
         {% if not loop.last %}
         {% endif %}
-      {% endfor %}
+    {% endfor %}
       </section>
   {% endfor %}
   </section>
   <section class="actions">
-      <a class="action" v-bind:href="'create/' + selectedCategory">Start</a>
+      <a class="action" v-bind:href="'start/' + selectedActivity">Start</a>
   </section>
 {% endblock %}

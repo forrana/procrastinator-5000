@@ -45,7 +45,7 @@ def create(category_id):
         else:
             db = get_db()
             db.execute(
-                'INSERT INTO post (title, body, author_id)'
+                'INSERT INTO activity (title, body, author_id)'
                 ' VALUES (?, ?, ?)',
                 (title, body, g.user['id'])
             )
@@ -88,7 +88,7 @@ def get_post(id, check_user=True):
 
 def get_record(id, check_user=True):
     record = get_db().execute(
-        ' SELECT r.id, started_at, title, description, activity_id, user_id, title'
+        ' SELECT r.id, started_at, r.title, r.description, activity_id, r.user_id, a.title, is_active'
         ' FROM record r JOIN activity a ON r.activity_id = a.id'
         ' WHERE r.id = ?',
         (id,)
@@ -118,22 +118,22 @@ def get_activity(id, check_user=True):
 
     return activity
 
-@bp.route('/<int:id>/start', methods=('POST',))
+@bp.route('/start/<int:activity_id>', methods=('GET',))
 @login_required
-def start(id):
-    activity = get_activity(id)
-
+def start(activity_id):
     db = get_db()
-    db.execute(
+    cursor = db.cursor()
+    cursor.execute(
         'INSERT INTO record (is_active, user_id, activity_id)'
         ' VALUES (?, ?, ?)',
-        (True, g.user['id'], activity['id'])
+        (True, g.user['id'], activity_id)
     )
     db.commit()
-    cratedRecordId = db.lastrowid
+    cratedRecordId = cursor.lastrowid
+    return redirect(url_for('selector.record', id=cratedRecordId))
 
-@bp.route('/<int:id>/record', methods=('GET', 'POST', 'DELETE'))
-def record():
+@bp.route('/record/<int:id>', methods=('GET', 'POST', 'DELETE'))
+def record(id):
     record = get_record(id)
 
     if request.method == 'POST':
@@ -152,7 +152,7 @@ def record():
         db.execute('DELETE FROM record WHERE id = ?', (id,))
         db.commit()
 
-    if record.is_active:
+    if record['is_active']:
         return render_template('selector/active_record.html', record=record)
     return render_template('selector/inactive_record.html', record=record)
 

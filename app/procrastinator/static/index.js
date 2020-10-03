@@ -1,11 +1,11 @@
 var app = new Vue({
   el: '#app',
   data: {
-    selectedCategory: ""
+    selectedActivity: ""
   },
   methods: {
-    selectCategory: function (category) {
-      this.selectedCategory = category
+    selectActivity: function (activity) {
+      this.selectedActivity = activity
     }
   }
 })
