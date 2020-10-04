@@ -1,0 +1,4 @@
+include procrastinator/schema.sql
+graft procrastinator/static
+graft procrastinator/templates
+global-exclude *.pyc

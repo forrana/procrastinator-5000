@@ -104,16 +104,16 @@ def get_record(id, check_user=True):
 
 def get_activity(id, check_user=True):
     activity = get_db().execute(
-        ' SELECT r.id, title, description, score, icon, category_id, user_id, c.title'
+        ' SELECT a.id, a.title, a.description, score, a.icon, category_id, a.user_id, c.title'
         ' FROM activity a JOIN category c ON a.category_id = c.id'
-        ' WHERE r.id = ?',
+        ' WHERE a.id = ?',
         (id,)
     ).fetchone()
 
     if activity is None:
         abort(404, "Activity id {0} doesn't exist.".format(id))
 
-    if check_user and activity['user_id'] != g.user['id']:
+    if check_user and activity['user_id'] and activity['user_id'] != g.user['id']:
         abort(403)
 
     return activity
@@ -135,17 +135,28 @@ def start(activity_id):
 @bp.route('/record/<int:id>', methods=('GET', 'POST', 'DELETE'))
 def record(id):
     record = get_record(id)
+    activity = get_activity(record['activity_id'])
 
     if request.method == 'POST':
-        db = get_db()
-        finished_at = datetime.datetime.now()
-        db.execute(
-            'UPDATE record SET finished_at = ?, is_active = ?'
-            ' WHERE id = ?,',
-            (finished_at, False, id)
-        )
-        db.commit()
-        return redirect(url_for('selector.index'))
+        title = request.form['title']
+        description = request.form['description']
+        error = None
+
+        if not title:
+            error = 'Title is required.'
+
+        if error is not None:
+            flash(error)
+        else:
+            db = get_db()
+            finished_at = datetime.datetime.now()
+            db.execute(
+                'UPDATE record SET finished_at = ?, is_active = ?, title = ?, description = ?'
+                ' WHERE id = ?,',
+                (finished_at, False, id, title, description)
+            )
+            db.commit()
+            return redirect(url_for('selector.index'))
 
     if request.method == 'DELETE':
         db = get_db()
@@ -153,8 +164,8 @@ def record(id):
         db.commit()
 
     if record['is_active']:
-        return render_template('selector/active_record.html', record=record)
-    return render_template('selector/inactive_record.html', record=record)
+        return render_template('selector/active_record.html', record=record, activity=activity)
+    return render_template('selector/inactive_record.html', record=record, activity=activity)
 
 @bp.route('/<int:id>/update', methods=('GET', 'POST'))
 @login_required
